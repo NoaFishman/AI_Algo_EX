@@ -1,4 +1,6 @@
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class BayesianNet {
@@ -24,15 +26,43 @@ public class BayesianNet {
 
     public void setCpt(){
         for (String key : nodes.keySet()) {
-            for(String parent : nodes.get(key).getParents()) {
-                nodes.get(parent).addChild(key);
+            nodes.get(key).makeCpt();
+        }
+    }
+
+    public List<String> allParents(String name){
+        ArrayList<String> ans = new ArrayList<>(nodes.get(name).getParents());
+        ArrayList<String> ans2 = new ArrayList<>(nodes.get(name).getParents());
+        for(String parent: ans){
+            ArrayList<String> temp = new ArrayList<>(allParents(parent));
+            for(String s: temp){
+                if(!ans2.contains(s)){
+                    ans2.add(s);
+                }
             }
         }
+        return ans2;
+    }
+
+    public List<String> allKids(String name){
+        ArrayList<String> ans = new ArrayList<>(nodes.get(name).getChildrens());
+        ArrayList<String> ans2 = new ArrayList<>(nodes.get(name).getChildrens());
+        for(String kid: ans){
+            ArrayList<String> temp = new ArrayList<>(allParents(kid));
+            for(String s: temp){
+                if(!ans2.contains(s)){
+                    ans2.add(s);
+                }
+            }
+        }
+        return ans2;
     }
 
     public void setKids(){
         for (String key : nodes.keySet()) {
-
+            for(String parent : nodes.get(key).getParents()) {
+                nodes.get(parent).addChild(key);
+            }
         }
     }
 
